@@ -1,0 +1,38 @@
+@import "./font.scss";
+@import "../../../node_modules/bootstrap/scss/bootstrap.scss";
+
+* {
+    font-family: IranSans;
+}
+
+.note {
+    width: 200px;
+    height: 200px;
+    padding: 5px;
+    background-color: yellow;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: #00000070 2px 2px 6px 0px;
+
+    textarea {
+        background: none;
+        color: black;
+        font-size: 16px;
+        direction: rtl;
+        border: none;
+        outline: none;
+    }
+
+    .handle {
+        cursor: move;
+    }
+}
+
+.add {
+    font-size: 46px;
+    width: 75px;
+    height: 75px;
+    position: fixed;
+    left: 15px;
+    bottom: 15px;
+}
