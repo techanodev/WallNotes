@@ -29,7 +29,7 @@ export default class Note extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props)
-        this.state = { showColor: false, showTrash: false, note: (!props.note ? { x: 0, y: 0, text: '' } : props.note), isMove: false }
+        this.state = { showColor: false, showTrash: false, note: (!props.note ? { x: 0, y: 0, text: '', updatedAt: new Date(), createdAt: new Date(), color: 'Yellow' } : props.note), isMove: false }
         this.note = React.createRef<HTMLDivElement>()
         this.trash = React.createRef()
         this.text = React.createRef()

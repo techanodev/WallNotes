@@ -27,15 +27,21 @@ export default class Home extends React.Component<{}, State> {
 
         window.onbeforeunload = function (event) {
         };
+
+
         // alert("کافیه برای اضافه کردن یک نوت انگشت خود را نگه دارید یا کلیک راست کنید.")
     }
+
+    mobileCheck() {
+        return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+    };
 
     addNewNote(e?: React.MouseEvent) {
         const audio = new Audio('/audios/new-paper.wav')
         audio.play().then(() => {
             const notes = this.state.notes
             console.log(e)
-            notes.push({ x: e?.clientX ?? 0, y: e?.clientY ?? 0, text: "tet" })
+            notes.push({ x: e?.clientX ?? 0, y: e?.clientY ?? 0, text: "", updatedAt: new Date(), createdAt: new Date() })
             this.setState({ notes: notes })
             this.socket?.emit('notes', this.state.notes)
         })
@@ -65,9 +71,18 @@ export default class Home extends React.Component<{}, State> {
         }
     }
 
+    onContextMenu(e: React.MouseEvent) {
+        if (!this.mobileCheck()) return
+        this.addNewNote(e)
+    }
+
     render() {
         return (<div className='home'>
-            <div className='container' onContextMenu={(e) => this.addNewNote(e)}></div>
+            <div
+                className='container'
+                onContextMenu={(e) => this.onContextMenu(e)}
+                onDoubleClick={(e) => this.addNewNote(e)}
+            ></div>
             <div className='notes'>
                 {Object.values(this.state.otherNotes).flat().map((note: NoteType) => (
                     <Note
