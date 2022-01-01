@@ -1,5 +1,6 @@
 export type NoteType = {
     x: number,
     y: number,
-    text: string
+    text: string,
+    color?: string
 }

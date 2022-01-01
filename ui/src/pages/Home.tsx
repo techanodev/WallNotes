@@ -1,5 +1,4 @@
 import React from 'react'
-import { TwitterPicker } from 'react-color'
 import Note from '../components/Note'
 import { NoteType } from '../types/NoteType'
 
@@ -18,29 +17,32 @@ export default class Home extends React.Component<{}, State> {
     }
 
     addNewNote() {
-        // this.colorPicker.current?.click()
-        this.onColorChanged()
-    }
-
-    onColorChanged() {
         console.log("ok")
         const notes = this.state.notes
         notes.push({ x: 0, y: 0, text: "" })
         this.setState({ notes: notes })
     }
 
+    deleteNote(index: number) {
+        const notes = this.state.notes
+        notes.splice(index, 1)
+        this.setState({ notes: notes })
+    }
+
+    onChange(index: number, note: NoteType) {
+        const notes = this.state.notes
+        notes[index] = note
+        this.setState({ notes: notes })
+        console.log(note)
+    }
+
     render() {
         return (<>
-            {this.state.notes.map(note => (
-                <Note />
-            ))}
-
-            <input
-                className="btn rounded-circle add outline-none d-none"
-                type="color"
-                ref={this.colorPicker}
-                onBlur={() => this.onColorChanged()}
-            />
+            <div>
+                {this.state.notes.map((note: NoteType, index: number) => (
+                    <Note note={note} onDelete={() => this.deleteNote(index)} onChange={note => this.onChange(index, note)} />
+                ))}
+            </div>
 
 
             <button

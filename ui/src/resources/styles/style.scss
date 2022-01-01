@@ -17,6 +17,7 @@ body {
     text-align: center;
     border-radius: 10px;
     box-shadow: #00000070 2px 2px 6px 0px;
+    position: absolute;
 
     textarea {
         background: none;
@@ -25,18 +26,34 @@ body {
         direction: rtl;
         border: none;
         outline: none;
-
+        resize: none;
         position: absolute;
         left: 5px;
         right: 5px;
         top: 35px;
-        bottom: 5px;
+        bottom: 30px;
     }
 
     .color-picker {
         position: absolute !important;
-        right: 0;
-        bottom: -120px;
+        right: 35px;
+        bottom: -95px;
+    }
+
+    .icon {
+        bottom: 10px;
+        position: absolute;
+        right: 15px;
+        color: black;
+        cursor: pointer;
+
+        &.palette {
+            right: 50px;
+        }
+    }
+
+    .tooltip-inner {
+        text-align: start;
     }
 
     .handle {
