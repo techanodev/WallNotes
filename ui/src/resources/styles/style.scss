@@ -1,6 +1,10 @@
 @import "./font.scss";
 @import "../../../node_modules/bootstrap/scss/bootstrap.scss";
 
+body {
+    min-width: 1500px;
+}
+
 * {
     font-family: IranSans;
 }
@@ -21,10 +25,23 @@
         direction: rtl;
         border: none;
         outline: none;
+
+        position: absolute;
+        left: 5px;
+        right: 5px;
+        top: 35px;
+        bottom: 5px;
+    }
+
+    .color-picker {
+        position: absolute !important;
+        right: 0;
+        bottom: -120px;
     }
 
     .handle {
         cursor: move;
+        width: 100%;
     }
 }
 

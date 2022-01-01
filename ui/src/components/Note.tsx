@@ -1,8 +1,14 @@
-import { render } from "@testing-library/react";
 import React from "react";
 import Draggable from "react-draggable";
+import { ColorResult, TwitterPicker } from 'react-color'
+import $ from 'jquery'
 
 export default class Note extends React.Component {
+
+    colorChange(e: ColorResult) {
+        $('.note').css('background-color', `rgb(${e.rgb.r},${e.rgb.g},${e.rgb.b})`)
+    }
+
     render() {
         return (<>
             <Draggable
@@ -13,7 +19,10 @@ export default class Note extends React.Component {
             >
                 <div className='note'>
                     <div className="handle btn">...</div>
+                    <input className="color-picker" type="color" />
                     <textarea placeholder='می توانید اینجا متنی را وارد نمایید'></textarea>
+
+                    <TwitterPicker onChange={(e) => this.colorChange(e)} triangle='top-right' className="color-picker" />
                 </div>
             </Draggable >
         </>)
