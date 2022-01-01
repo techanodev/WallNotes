@@ -10,6 +10,7 @@ type State = {
     showColor: boolean
     showTrash: boolean
     note: NoteType
+    isMove: boolean
 }
 
 type Props = {
@@ -28,7 +29,7 @@ export default class Note extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props)
-        this.state = { showColor: false, showTrash: false, note: { x: 0, y: 0, text: '' } }
+        this.state = { showColor: false, showTrash: false, note: { x: 0, y: 0, text: '' }, isMove: false }
         this.note = React.createRef<HTMLDivElement>()
         this.trash = React.createRef()
         this.text = React.createRef()
@@ -54,7 +55,11 @@ export default class Note extends React.Component<Props, State> {
     }
 
     onStartMoving() {
-        this.setState({ showTrash: false, showColor: false })
+        this.setState({ isMove: true })
+    }
+
+    onEndMoving() {
+        this.setState({ isMove: false })
     }
 
     cancelTrash() {
@@ -114,10 +119,11 @@ export default class Note extends React.Component<Props, State> {
                 scale={1}
                 disabled={this.props.readonly}
                 onStart={() => this.onStartMoving()}
+                onStop={() => this.onEndMoving()}
                 onDrag={(_e, data) => this.onMove(data)}
             >
                 <div
-                    className='note'
+                    className={'note' + (this.state.isMove ? ' move' : '')}
                     ref={this.note}
                     style={{ backgroundColor: this.state.note?.color }}
                     onClick={() => this.onClick()}

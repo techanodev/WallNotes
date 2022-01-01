@@ -63,8 +63,9 @@ export default class Home extends React.Component<{}, State> {
     }
 
     render() {
-        return (<>
-            <div className='notes' onContextMenu={(e) => this.addNewNote(e)}>
+        return (<div className='home'>
+            <div className='container' onContextMenu={(e) => this.addNewNote(e)}></div>
+            <div className='notes'>
                 {this.state.otherNotes.map((note: NoteType) => (
                     <Note
                         note={note}
@@ -89,6 +90,6 @@ export default class Home extends React.Component<{}, State> {
             >
                 +
             </button>
-        </>)
+        </div >)
     }
 }
