@@ -14,7 +14,8 @@ app.use(routes)
 
 const server = http.createServer(app)
 
-const socket = new NotesSockets(server).setIo()
+const socket = new NotesSockets(server)
+socket.init()
 
 const port = Number.parseInt(process.env.APP_PORT ?? '8000')
 const host = process.env.APP_HOST ?? '127.0.0.1'

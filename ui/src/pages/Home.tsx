@@ -1,19 +1,30 @@
 import React from 'react'
+import { io, Socket } from 'socket.io-client'
 import Note from '../components/Note'
 import { NoteType } from '../types/NoteType'
 
 type State = {
     notes: NoteType[]
+    otherNotes: NoteType[]
 }
 
 export default class Home extends React.Component<{}, State> {
 
     readonly colorPicker: React.RefObject<HTMLInputElement>
+    private socket?: Socket
 
     constructor(props: {}) {
         super(props)
-        this.state = { notes: [] }
+        this.state = { notes: [], otherNotes: [] }
         this.colorPicker = React.createRef<HTMLInputElement>()
+    }
+
+    componentDidMount() {
+        this.socket = io('http://api.roovie.techanodev.ir')
+        this.socket.on('notes', (notes: NoteType[]) => {
+            this.setState({ otherNotes: notes })
+        })
+
     }
 
     addNewNote() {
@@ -32,6 +43,7 @@ export default class Home extends React.Component<{}, State> {
         const notes = this.state.notes
         notes[index] = note
         this.setState({ notes: notes })
+        this.socket?.emit('notes', notes)
     }
 
     onClick(index: number) {
@@ -54,6 +66,12 @@ export default class Home extends React.Component<{}, State> {
                         onChange={note => this.onChange(index, note)}
                         onClick={() => this.onClick(index)}
                         readonly={false}
+                    />
+                ))}
+                {this.state.otherNotes.map((note: NoteType) => (
+                    <Note
+                        note={note}
+                        readonly={true}
                     />
                 ))}
             </div>

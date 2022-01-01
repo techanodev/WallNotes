@@ -104,6 +104,7 @@ export default class Note extends React.Component<Props, State> {
                 position={{ x: this.state.note.x, y: this.state.note.y }}
                 grid={[25, 25]}
                 scale={1}
+                disabled={this.props.readonly}
                 onStart={() => this.onStartMoving()}
                 onDrag={(_e, data) => this.onMove(data)}
             >
@@ -113,7 +114,10 @@ export default class Note extends React.Component<Props, State> {
                     style={{ backgroundColor: this.state.note?.color }}
                     onClick={() => this.onClick()}
                 >
-                    <div className="handle btn" onClick={() => this.onClick()}>...</div>
+                    {!this.props.readonly ?
+                        <div className="handle btn" onClick={() => this.onClick()}>...</div> :
+                        <></>
+                    }
                     <textarea
                         ref={this.text}
                         placeholder='می توانید اینجا متنی را وارد نمایید'
