@@ -1,5 +1,5 @@
 import React from "react";
-import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
+import Draggable, { DraggableData } from "react-draggable";
 import { ColorResult, TwitterPicker } from 'react-color'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faPalette } from '@fortawesome/free-solid-svg-icons'
@@ -62,9 +62,12 @@ export default class Note extends React.Component<Props, State> {
     }
 
     onDelete() {
-        this.onStartMoving()
-        if (!this.props.onDelete) return
-        this.props.onDelete()
+        const audio = new Audio('/audios/delete-paper.wav')
+        audio.play().then(() => {
+            this.onStartMoving()
+            if (!this.props.onDelete) return
+            this.props.onDelete()
+        })
     }
 
     onMove(e: DraggableData) {
@@ -84,9 +87,14 @@ export default class Note extends React.Component<Props, State> {
         this.props.onChange(this.state.note)
     }
 
-    componentDidUpdate(prevProps: Props, _prevState: State): void {
-        if (prevProps.note == this.props.note || !this.props.note) return
+    componentDidUpdate(prevProps: Props, prevState: State): void {
+        if (prevProps.note === this.props.note || !this.props.note) return
         this.setState({ note: this.props.note })
+        if (this.state.note.x !== prevState.note.x || this.state.note.y !== prevState.note.y) {
+            const audio = new Audio('/audios/move-paper.wav')
+            audio.play().then(() => {
+            })
+        }
         if (this.state.note.color && this.note.current)
             this.note.current.style.backgroundColor = this.state.note?.color
     }
@@ -120,7 +128,7 @@ export default class Note extends React.Component<Props, State> {
                     }
                     <textarea
                         ref={this.text}
-                        placeholder='می توانید اینجا متنی را وارد نمایید'
+                        placeholder={!this.props.readonly ? 'می توانید اینجا متنی را وارد نمایید' : ''}
                         onChange={(e) => this.onTextChanged(e)}
                         value={this.state.note.text}
                         readOnly={this.props.readonly}

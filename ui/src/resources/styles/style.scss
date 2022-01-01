@@ -2,7 +2,21 @@
 @import "../../../node_modules/bootstrap/scss/bootstrap.scss";
 
 body {
-    min-width: 1500px;
+    min-width: 2500px;
+    min-height: 2500px;
+}
+
+.background {
+    background-color: #ffffff;
+    opacity: 0.3;
+    background-image: linear-gradient(#b2b438 1px, transparent 1px), linear-gradient(to right, #b2b438 1px, #ffffff 1px);
+    background-size: 20px 20px;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 * {
@@ -69,4 +83,13 @@ body {
     position: fixed;
     left: 15px;
     bottom: 15px;
+    z-index: 100;
+}
+
+.notes {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
