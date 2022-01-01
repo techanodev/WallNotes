@@ -29,7 +29,7 @@ export default class Note extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props)
-        this.state = { showColor: false, showTrash: false, note: { x: 0, y: 0, text: '' }, isMove: false }
+        this.state = { showColor: false, showTrash: false, note: (!props.note ? { x: 0, y: 0, text: '' } : props.note), isMove: false }
         this.note = React.createRef<HTMLDivElement>()
         this.trash = React.createRef()
         this.text = React.createRef()
@@ -55,7 +55,7 @@ export default class Note extends React.Component<Props, State> {
     }
 
     onStartMoving() {
-        this.setState({ isMove: true })
+        this.setState({ isMove: true, showTrash: false, showColor: false })
     }
 
     onEndMoving() {
@@ -93,8 +93,10 @@ export default class Note extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
-        if (prevProps.note === this.props.note || !this.props.note) return
+        console.log(this.props)
+        if ((prevProps.note && prevProps.note === this.props.note) || !this.props.note) return
         this.setState({ note: this.props.note })
+        console.log(this.props.note)
         if (this.state.note.x !== prevState.note.x || this.state.note.y !== prevState.note.y) {
             const audio = new Audio('/audios/move-paper.wav')
             audio.play().then(() => {

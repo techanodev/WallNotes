@@ -5,7 +5,7 @@ import { NoteType } from '../types/NoteType'
 
 type State = {
     notes: NoteType[]
-    otherNotes: NoteType[]
+    otherNotes: { [id: string]: NoteType[] }
 }
 
 export default class Home extends React.Component<{}, State> {
@@ -15,15 +15,18 @@ export default class Home extends React.Component<{}, State> {
 
     constructor(props: {}) {
         super(props)
-        this.state = { notes: [], otherNotes: [] }
+        this.state = { notes: [], otherNotes: {} }
         this.colorPicker = React.createRef<HTMLInputElement>()
     }
 
     componentDidMount() {
         this.socket = io('http://api.roovie.techanodev.ir')
-        this.socket.on('notes', (notes: NoteType[]) => {
+        this.socket.on('notes', (notes) => {
             this.setState({ otherNotes: notes })
         })
+
+        window.onbeforeunload = function (event) {
+        };
         // alert("کافیه برای اضافه کردن یک نوت انگشت خود را نگه دارید یا کلیک راست کنید.")
     }
 
@@ -66,7 +69,7 @@ export default class Home extends React.Component<{}, State> {
         return (<div className='home'>
             <div className='container' onContextMenu={(e) => this.addNewNote(e)}></div>
             <div className='notes'>
-                {this.state.otherNotes.map((note: NoteType) => (
+                {Object.values(this.state.otherNotes).flat().map((note: NoteType) => (
                     <Note
                         note={note}
                         readonly={true}

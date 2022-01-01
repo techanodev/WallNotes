@@ -1,3 +1,4 @@
+import { NoteI } from './../models/notes.models';
 import { Server, Socket } from 'socket.io'
 import http = require('http')
 
