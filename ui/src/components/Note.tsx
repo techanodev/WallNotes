@@ -16,6 +16,8 @@ type Props = {
     note?: NoteType,
     onDelete?: () => void
     onChange?: (note: NoteType) => void
+    readonly: boolean
+    onClick?: () => void
 }
 
 export default class Note extends React.Component<Props, State> {
@@ -60,6 +62,7 @@ export default class Note extends React.Component<Props, State> {
     }
 
     onDelete() {
+        this.onStartMoving()
         if (!this.props.onDelete) return
         this.props.onDelete()
     }
@@ -88,52 +91,67 @@ export default class Note extends React.Component<Props, State> {
             this.note.current.style.backgroundColor = this.state.note?.color
     }
 
+    onClick() {
+        if (!this.props.onClick) return
+        this.props.onClick()
+    }
+
     render() {
         return (<>
             <Draggable
                 handle=".handle"
-                defaultPosition={{ x: 0, y: 0 }}
+                defaultPosition={{ x: this.state.note.x, y: this.state.note.y }}
                 position={{ x: this.state.note.x, y: this.state.note.y }}
                 grid={[25, 25]}
                 scale={1}
                 onStart={() => this.onStartMoving()}
                 onDrag={(_e, data) => this.onMove(data)}
             >
-                <div className='note' ref={this.note} style={{ backgroundColor: this.state.note?.color }}>
-                    <div className="handle btn">...</div>
+                <div
+                    className='note'
+                    ref={this.note}
+                    style={{ backgroundColor: this.state.note?.color }}
+                    onClick={() => this.onClick()}
+                >
+                    <div className="handle btn" onClick={() => this.onClick()}>...</div>
                     <textarea
                         ref={this.text}
                         placeholder='می توانید اینجا متنی را وارد نمایید'
                         onChange={(e) => this.onTextChanged(e)}
                         value={this.state.note.text}
+                        readOnly={this.props.readonly}
                     >
                     </textarea>
-                    <div className="icon" ref={this.trash} onClick={() => this.toggleTrash()}>
-                        <FontAwesomeIcon
-                            icon={faTrash}
-                        />
-                    </div>
-                    <div className="icon palette">
-                        <FontAwesomeIcon onClick={() => this.toggleColors()} icon={faPalette} />
-                    </div>
+                    {!this.props.readonly ? <>
+                        <div className="icon" ref={this.trash} onClick={() => this.toggleTrash()}>
+                            <FontAwesomeIcon
+                                icon={faTrash}
+                            />
+                        </div>
+                        <div className="icon palette">
+                            <FontAwesomeIcon onClick={() => this.toggleColors()} icon={faPalette} />
+                        </div>
 
-                    {this.state.showColor &&
-                        <TwitterPicker onChange={(e) => this.colorChange(e)} triangle='top-right' className="color-picker" />
+                        {this.state.showColor &&
+                            <TwitterPicker onChange={(e) => this.colorChange(e)} triangle='top-right' className="color-picker" />
+                        }
+
+                        <Overlay target={this.trash.current} show={this.state.showTrash} placement="bottom-end">
+                            {(props) => (
+                                <Tooltip className="text-start" {...props}>
+                                    <span className="d-block">
+                                        آیا شما مطمئن هستید که این مورد را حذف کنید ؟
+                                    </span>
+                                    <ButtonGroup dir="ltr">
+                                        <Button variant="secondary" onClick={() => this.cancelTrash()}>خیر</Button>
+                                        <Button variant="primary" onClick={() => this.onDelete()}>بله</Button>
+                                    </ButtonGroup>
+                                </Tooltip>
+                            )}
+                        </Overlay>
+                    </>
+                        : <></>
                     }
-
-                    <Overlay target={this.trash.current} show={this.state.showTrash} placement="bottom-end">
-                        {(props) => (
-                            <Tooltip className="text-start" {...props}>
-                                <span className="d-block">
-                                    آیا شما مطمئن هستید که این مورد را حذف کنید ؟
-                                </span>
-                                <ButtonGroup dir="ltr">
-                                    <Button variant="secondary" onClick={() => this.cancelTrash()}>خیر</Button>
-                                    <Button variant="primary" onClick={() => this.onDelete()}>بله</Button>
-                                </ButtonGroup>
-                            </Tooltip>
-                        )}
-                    </Overlay>
                 </div>
             </Draggable >
         </>)
