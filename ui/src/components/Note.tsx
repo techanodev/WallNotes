@@ -29,7 +29,7 @@ export default class Note extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props)
-        this.state = { showColor: false, showTrash: false, note: (!props.note ? { x: 0, y: 0, text: '', updatedAt: new Date(), createdAt: new Date(), color: 'Yellow' } : props.note), isMove: false }
+        this.state = { showColor: false, showTrash: false, note: (!props.note ? { coordinates: { x: 0, y: 0 }, text: '', color: 'Yellow' } : props.note), isMove: false }
         this.note = React.createRef<HTMLDivElement>()
         this.trash = React.createRef()
         this.text = React.createRef()
@@ -77,8 +77,8 @@ export default class Note extends React.Component<Props, State> {
 
     onMove(e: DraggableData) {
         const note = this.state.note
-        note.x = e.x
-        note.y = e.y
+        note.coordinates.x = e.x
+        note.coordinates.y = e.y
         this.setState({ note: note })
         if (!this.props.onChange) return
         this.props.onChange(this.state.note)
@@ -93,11 +93,10 @@ export default class Note extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
-        console.log(this.props)
         if ((prevProps.note && prevProps.note === this.props.note) || !this.props.note) return
         this.setState({ note: this.props.note })
         console.log(this.props.note)
-        if (this.state.note.x !== prevState.note.x || this.state.note.y !== prevState.note.y) {
+        if (this.state.note.coordinates.x !== prevState.note.coordinates.x || this.state.note.coordinates.y !== prevState.note.coordinates.y) {
             const audio = new Audio('/audios/move-paper.wav')
             audio.play().then(() => {
             })
@@ -115,8 +114,8 @@ export default class Note extends React.Component<Props, State> {
         return (<>
             <Draggable
                 handle=".handle"
-                defaultPosition={{ x: this.state.note.x, y: this.state.note.y }}
-                position={{ x: this.state.note.x, y: this.state.note.y }}
+                defaultPosition={{ x: this.state.note.coordinates.x, y: this.state.note.coordinates.y }}
+                position={{ x: this.state.note.coordinates.x, y: this.state.note.coordinates.y }}
                 grid={[25, 25]}
                 scale={1}
                 disabled={this.props.readonly}

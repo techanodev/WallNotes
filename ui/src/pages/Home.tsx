@@ -4,7 +4,7 @@ import Note from '../components/Note'
 import { NoteType } from '../types/NoteType'
 
 type State = {
-    notes: NoteType[]
+    userNotes: NoteType[]
     otherNotes: { [id: string]: NoteType[] }
 }
 
@@ -15,7 +15,7 @@ export default class Home extends React.Component<{}, State> {
 
     constructor(props: {}) {
         super(props)
-        this.state = { notes: [], otherNotes: {} }
+        this.state = { userNotes: [], otherNotes: {} }
         this.colorPicker = React.createRef<HTMLInputElement>()
     }
 
@@ -25,11 +25,37 @@ export default class Home extends React.Component<{}, State> {
             this.setState({ otherNotes: notes })
         })
 
+        this.socket.on('note', (note) => {
+            console.log(note)
+            this.addNoteToState(note)
+        })
+
+        this.socket.on('delete', (id) => {
+            console.log(`${id} has removed from database`)
+            this.removeNoteFromState(id)
+        })
+
+        this.socket.on('error', error => {
+            console.error(error)
+        })
+
         window.onbeforeunload = function (event) {
         };
 
 
         // alert("کافیه برای اضافه کردن یک نوت انگشت خود را نگه دارید یا کلیک راست کنید.")
+    }
+
+    addNoteToState(note: NoteType) {
+        const notes = this.state.userNotes
+        notes.push(note)
+        this.setState({ userNotes: notes })
+    }
+
+    removeNoteFromState(id: string) {
+        let notes = this.state.userNotes
+        notes = notes.filter(x => x.id != id)
+        this.setState({ userNotes: notes })
     }
 
     mobileCheck() {
@@ -39,37 +65,30 @@ export default class Home extends React.Component<{}, State> {
     addNewNote(e?: React.MouseEvent) {
         const audio = new Audio('/audios/new-paper.wav')
         audio.play().then(() => {
-            const notes = this.state.notes
-            console.log(e)
-            notes.push({ x: e?.clientX ?? 0, y: e?.clientY ?? 0, text: "", updatedAt: new Date(), createdAt: new Date() })
-            this.setState({ notes: notes })
-            this.socket?.emit('notes', this.state.notes)
+            this.socket?.emit('create', { x: e?.clientX ?? 0, y: e?.clientY ?? 0 })
         })
     }
 
     deleteNote(index: number) {
-        const notes = this.state.notes
-        notes.splice(index, 1)
-        this.setState({ notes: notes })
-        this.socket?.emit('notes', this.state.notes)
+        this.socket?.emit('delete', this.state.userNotes[index].id)
     }
 
-    onChange(index: number, note: NoteType) {
-        const notes = this.state.notes
-        notes[index] = note
-        this.setState({ notes: notes })
-        this.socket?.emit('notes', this.state.notes)
-    }
+    // onChange(index: number, note: NoteType) {
+    //     const notes = this.state.notes
+    //     notes[index] = note
+    //     this.setState({ notes: notes })
+    //     this.socket?.emit('notes', this.state.notes)
+    // }
 
-    onClick(index: number) {
-        const notes = this.state.notes
-        if (index < notes.length - 1) {
-            const oldNote = this.state.notes[index]
-            notes.splice(index, 1)
-            notes.push(oldNote)
-            this.setState({ notes: notes })
-        }
-    }
+    // onClick(index: number) {
+    //     const notes = this.state.notes
+    //     if (index < notes.length - 1) {
+    //         const oldNote = this.state.notes[index]
+    //         notes.splice(index, 1)
+    //         notes.push(oldNote)
+    //         this.setState({ notes: notes })
+    //     }
+    // }
 
     onContextMenu(e: React.MouseEvent) {
         if (!this.mobileCheck()) return
@@ -90,12 +109,12 @@ export default class Home extends React.Component<{}, State> {
                         readonly={true}
                     />
                 ))}
-                {this.state.notes.map((note: NoteType, index: number) => (
+                {this.state.userNotes.map((note: NoteType, index: number) => (
                     <Note
                         note={note}
                         onDelete={() => this.deleteNote(index)}
-                        onChange={note => this.onChange(index, note)}
-                        onClick={() => this.onClick(index)}
+                        // onChange={note => this.onChange(index, note)}
+                        // onClick={() => this.onClick(index)}
                         readonly={false}
                     />
                 ))}
