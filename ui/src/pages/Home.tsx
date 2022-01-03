@@ -1,11 +1,16 @@
 import React from 'react'
+import { toast } from 'react-toastify'
 import { io, Socket } from 'socket.io-client'
+import LoginModal from '../components/modals/LoginModal'
 import Note from '../components/Note'
 import { NoteType } from '../types/NoteType'
+import Auth from '../utils/Auth'
+// import Cookies from 'js-cookie'
 
 type State = {
     userNotes: NoteType[]
     otherNotes: { [id: string]: NoteType[] }
+    isWide: boolean
 }
 
 export default class Home extends React.Component<{}, State> {
@@ -15,29 +20,11 @@ export default class Home extends React.Component<{}, State> {
 
     constructor(props: {}) {
         super(props)
-        this.state = { userNotes: [], otherNotes: {} }
+        this.state = { userNotes: [], otherNotes: {}, isWide: false }
         this.colorPicker = React.createRef<HTMLInputElement>()
     }
 
     componentDidMount() {
-        this.socket = io('http://api.roovie.techanodev.ir')
-        this.socket.on('notes', (notes) => {
-            this.setState({ otherNotes: notes })
-        })
-
-        this.socket.on('note', (note) => {
-            console.log(note)
-            this.addNoteToState(note)
-        })
-
-        this.socket.on('delete', (id) => {
-            console.log(`${id} has removed from database`)
-            this.removeNoteFromState(id)
-        })
-
-        this.socket.on('error', error => {
-            console.error(error)
-        })
 
         window.onbeforeunload = function (event) {
         };
@@ -95,8 +82,35 @@ export default class Home extends React.Component<{}, State> {
         this.addNewNote(e)
     }
 
+    onAuth() {
+        this.socket = io('http://api.roovie.techanodev.ir', { auth: { token: Auth.getToken() } })
+        this.socket.on('notes', (notes) => {
+            this.setState({ otherNotes: notes })
+        })
+
+        this.socket.on('note', (note) => {
+            console.log(note)
+            this.addNoteToState(note)
+        })
+
+        this.socket.on('delete', (id) => {
+            console.log(`${id} has removed from database`)
+            this.removeNoteFromState(id)
+        })
+
+        this.socket.on('error', error => {
+            console.error(error)
+            if (error.message) {
+                toast.error(error.message)
+            }
+        })
+    }
+
     render() {
-        return (<div className='home'>
+        return (<div className='home' style={this.state.isWide ? { minWidth: 2500, minHeight: 2500 } : {}}>
+
+            <LoginModal onAuth={() => this.onAuth()} />
+
             <div
                 className='container'
                 onContextMenu={(e) => this.onContextMenu(e)}

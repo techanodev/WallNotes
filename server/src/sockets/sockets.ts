@@ -2,6 +2,8 @@ import { NoteI } from './../models/notes.models';
 import { Server, Socket } from 'socket.io'
 import http = require('http')
 
+import jwt = require('jsonwebtoken')
+
 type SocketListener = ((socket: import('socket.io').Socket) => void)
 
 /**
@@ -32,7 +34,30 @@ export default class SocketService {
     setIo(io: Server) {
         this.io = io
         this.io.on("connection", (socket: Socket) => this.connection(socket))
+        this.io.use((socket, next) => {
+            const privateKey = process.env.APP_SECRET_KEY ?? ''
+            jwt.verify(socket.handshake.auth.token, privateKey, (err: any, _decoded: any) => {
+                if (err) {
+                    next(err)
+                }
+                next()
+            })
+        });
         return this.io
+    }
+
+    async getUserId(socket: Socket): Promise<{ name: string, userId: string }> {
+        const token = socket.handshake.auth.token
+        return new Promise((resolve, err) => {
+            const privateKey = process.env.APP_SECRET_KEY ?? ''
+            jwt.verify(token, privateKey, (err: any, decoded: any) => {
+                if (err) {
+                    err(err)
+                }
+                resolve(decoded)
+
+            })
+        })
     }
 
     /**

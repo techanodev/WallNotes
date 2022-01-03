@@ -1,5 +1,6 @@
 import React from 'react';
 import './resources/styles/style.scss'
+import 'react-toastify/dist/ReactToastify.css';
 
 import {
   BrowserRouter as Router,
@@ -7,6 +8,7 @@ import {
   Routes,
 } from "react-router-dom";
 import Home from './pages/Home';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
@@ -17,6 +19,7 @@ function App() {
           <Route path="/" element={<Home />} />
         </Routes>
       </Router>
+      <ToastContainer />
     </div >
   );
 }

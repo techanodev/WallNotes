@@ -6,6 +6,7 @@ export interface NoteI {
         x: number
         y: number
     }
+    userId: string
     text: string
     color?: string
 }
@@ -15,6 +16,10 @@ export const NoteSchema = new Schema(
         text: {
             type: String,
             required: false
+        },
+        userId: {
+            type: String,
+            required: true
         },
         coordinates: {
             type: {

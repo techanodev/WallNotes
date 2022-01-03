@@ -24,18 +24,23 @@ export default class NotesSockets extends SocketService {
     }
 
     createNote(socket: Socket, coordinates: Coordinates) {
-        const note = new Note({ coordinates: coordinates, text: '' })
-        note.save((error, note) => {
-            if (error) {
-                console.error(error)
-                return socket.emit('error', error)
-            }
-            const noteData: NoteI = {
-                id: note.id,
-                coordinates: coordinates,
-                text: ''
-            }
-            socket.emit('note', noteData)
+        this.getUserId(socket).then(data => {
+            console.log(data)
+            const note = new Note({ coordinates: coordinates, text: '', userId: data.userId })
+            note.save((error, note) => {
+                if (error) {
+                    console.error(error)
+                    return socket.emit('error', error)
+                }
+                console.log(data)
+                const noteData: NoteI = {
+                    id: note.id,
+                    coordinates: coordinates,
+                    text: '',
+                    userId: data.userId
+                }
+                socket.emit('note', noteData)
+            })
         })
     }
 
