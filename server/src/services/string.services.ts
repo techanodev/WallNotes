@@ -1,4 +1,5 @@
 import RegexService from './regex.services'
+import { badWords } from '../dict/excludes/words'
 
 /**
  * Service for string
@@ -33,7 +34,27 @@ declare global {
         toBoolean(): boolean
 
         isNumeric(): boolean
+
+        removeBadWords(): string
     }
+}
+
+String.prototype.removeBadWords = function (): string {
+    let text: string = this.toString()
+
+    let parts: string[] = text.split(' ')
+
+    for (let i = 0; i < parts.length; i++) {
+        const text = parts[i]
+        if (!badWords.includes(text)) continue
+        const len = parts[i].length
+        parts[i] = ''
+        for (let j = 0; j < len; j++) {
+            parts[i] += "*"
+        }
+    }
+
+    return parts.join(' ')
 }
 
 String.prototype.toCamelLowerCase = function (): string {

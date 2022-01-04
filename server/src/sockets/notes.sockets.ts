@@ -27,7 +27,10 @@ export default class NotesSockets extends SocketService {
 
     onChangeNote(socket: Socket, note: NoteI) {
         console.log(note)
-        socket.in('room').emit('user-note', note)
+        socket.in('room').emit('user-note', {
+            ...note,
+            text: note.text.removeBadWords()
+        })
         console.log(note.id)
         Note.updateOne({ _id: note.id }, note, (err: any, docs: any) => {
             if (err)
