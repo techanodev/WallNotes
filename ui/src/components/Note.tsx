@@ -14,9 +14,10 @@ type State = {
 }
 
 type Props = {
-    note?: NoteType,
+    note: NoteType,
     onDelete?: () => void
     onChange?: (note: NoteType) => void
+    onMove?: (note: NoteType) => void
     readonly: boolean
     onClick?: () => void
 }
@@ -29,7 +30,7 @@ export default class Note extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props)
-        this.state = { showColor: false, showTrash: false, note: (!props.note ? { coordinates: { x: 0, y: 0 }, text: '', color: 'Yellow' } : props.note), isMove: false }
+        this.state = { showColor: false, showTrash: false, note: props.note, isMove: false }
         this.note = React.createRef<HTMLDivElement>()
         this.trash = React.createRef()
         this.text = React.createRef()
@@ -60,6 +61,8 @@ export default class Note extends React.Component<Props, State> {
 
     onEndMoving() {
         this.setState({ isMove: false })
+        if (!this.props.onMove) return
+        this.props.onMove(this.state.note)
     }
 
     cancelTrash() {

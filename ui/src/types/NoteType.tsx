@@ -1,5 +1,5 @@
 export type NoteType = {
-    id?: string
+    id: string
     coordinates: {
         x: number,
         y: number,
