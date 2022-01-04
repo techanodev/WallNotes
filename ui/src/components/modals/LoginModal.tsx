@@ -55,7 +55,13 @@ export default class LoginModal extends Component<Props, State> {
                         </Modal.Header>
                         <Modal.Body>
                             <p dir="rtl">
-                                شما می توانید حساب کاربری خود را داشته باشید، آیا می خواهید یک حساب کاربری در این سایت ایجاد کنید یا میخواهید به عنوان مهمان ادامه دهید ؟
+                                خب خوش اومدی
+                            </p>
+                            <p dir="rtl">
+                                برای ساخت نوت تو گوشی باید انگشتتون رو روی صفحه نگه دارین و تو لپتاپ یا pc دابل کلیک کنید
+                            </p>
+                            <p>
+                                بزن بریم
                             </p>
                         </Modal.Body>
                         <Modal.Footer>

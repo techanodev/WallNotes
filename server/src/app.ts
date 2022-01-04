@@ -27,7 +27,8 @@ const host = process.env.APP_HOST ?? '127.0.0.1'
 
 server.listen(port, host, () => {
     console.log(`App started at http://${host}:${port}`)
-    mongoose.connect('mongodb://localhost:27017/myapp').catch(error => {
+    const url = process.env.APP_DB
+    mongoose.connect(url).catch(error => {
         console.error(error)
     }).then(result => {
         console.log(result)
