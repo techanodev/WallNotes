@@ -12,6 +12,7 @@ type State = {
     notes: { [id: string]: NoteType }
     isWide: boolean,
     userId: string
+    page: number
 }
 
 export default class Home extends React.Component<{}, State> {
@@ -21,7 +22,7 @@ export default class Home extends React.Component<{}, State> {
 
     constructor(props: {}) {
         super(props)
-        this.state = { userNotes: [], notes: {}, isWide: false, userId: '' }
+        this.state = { userNotes: [], notes: {}, isWide: false, userId: '', page: 1 }
         this.colorPicker = React.createRef<HTMLInputElement>()
     }
 
@@ -33,8 +34,10 @@ export default class Home extends React.Component<{}, State> {
 
     removeNoteFromState(id: string) {
         let notes = this.state.userNotes
+        let allNotes = this.state.notes
         notes = notes.filter(x => x.id != id)
-        this.setState({ userNotes: notes })
+        delete allNotes[id]
+        this.setState({ userNotes: notes, notes: allNotes })
     }
 
     mobileCheck() {
@@ -81,29 +84,12 @@ export default class Home extends React.Component<{}, State> {
             this.setState({ notes: notes })
         })
 
-
-        Request.send('v1/notes', { method: 'GET', headers: { token: Auth.getToken() as string } }).then(val => {
-            if (!val.data.status) return
-            const notes: NoteType[] = val.data.notes
-            const myNotes = this.state.userNotes
-            const notesResult: { [id: string]: NoteType } = {}
-            for (const note of notes) {
-                if (note.own) {
-                    myNotes.push(note)
-                    continue
-                }
-                notesResult[note.id] = note
-            }
-            this.setState({ notes: notesResult, userNotes: myNotes })
-        }).catch(e => {
-            console.error(e)
-            toast.error('خطا در دریافت اطلاعات نوت ها')
-        })
-
         this.socket.on('note', (note) => {
             console.log(note)
             this.addNoteToState(note)
         })
+
+        this.getData()
 
         this.socket.on('user-note', (note) => {
             console.log(note)
@@ -119,6 +105,35 @@ export default class Home extends React.Component<{}, State> {
             if (error.message) {
                 toast.error(error.message)
             }
+        })
+    }
+
+    getData() {
+        Request.send(`v1/notes?page=${this.state.page}`, { method: 'GET', headers: { token: Auth.getToken() as string } }).then(val => {
+            if (!val.data.status) return
+            const notes: NoteType[] = val.data.notes
+
+            this.setState({ page: this.state.page + 1 })
+
+            if (notes.length) {
+                this.getData()
+            } else {
+                return
+            }
+
+            const myNotes = this.state.userNotes
+            const notesResult: { [id: string]: NoteType } = this.state.notes
+            for (const note of notes) {
+                if (note.own) {
+                    myNotes.push(note)
+                    continue
+                }
+                notesResult[note.id] = note
+            }
+            this.setState({ notes: notesResult, userNotes: myNotes })
+        }).catch(e => {
+            console.error(e)
+            toast.error('خطا در دریافت اطلاعات نوت ها')
         })
     }
 

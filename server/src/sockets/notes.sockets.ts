@@ -63,7 +63,8 @@ export default class NotesSockets extends SocketService {
     }
 
     deleteNote(socket: Socket, id: string) {
-        Note.deleteOne({ id: id }).then(x => {
+        Note.deleteOne({ _id: id }).then(x => {
+            socket.to('room').emit('delete', id)
             socket.emit('delete', id)
             console.info('a note has removed by id ' + x)
         }).catch(e => {
