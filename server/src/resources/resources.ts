@@ -19,7 +19,7 @@ export default class Resource<T extends {}> {
      * @param {string[]} moreFields
      */
     public constructor(
-        model: T, moreFields?: string[]) {
+        model: T, userId?: string, moreFields?: string[]) {
         this.model = model
         this.moreFields = moreFields ? moreFields : []
     }
@@ -30,7 +30,7 @@ export default class Resource<T extends {}> {
      * if it was true may some variables removed from resource
      * @return {ResourceType}
      */
-    public toArray(isCollection?: boolean): ResourceType {
+    public toArray(userId?: string, isCollection?: boolean): ResourceType {
         let models = this.model as ResourceType
         if (isCollection) {
             let dataList = Object.entries(models)
@@ -68,6 +68,7 @@ export default class Resource<T extends {}> {
      */
     public static collection<T extends {}>(
         models: (T | undefined)[] | T[] | null | undefined,
+        userId?: string,
         options?: { fileFields: string[], moreFields: string[] },
     ): ResourceType[] {
         const items: ResourceType[] = []
@@ -83,7 +84,7 @@ export default class Resource<T extends {}> {
                 fileFields = options.fileFields
             }
 
-            const resource = new this(model, undefined).toArray(true)
+            const resource = new this(model, undefined).toArray(userId, true)
             items.push((resource))
         })
 

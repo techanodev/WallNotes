@@ -22,7 +22,7 @@ export default class UserController {
             console.log(`a user '${user.id}' has created`)
             const privateKey = process.env.APP_SECRET_KEY ?? ''
             const token = jwt.sign({ userId: user.id, name: name }, privateKey, { expiresIn: '30d' })
-            ResponseService.newInstance(res).set('token', token).setStatus(true).response()
+            ResponseService.newInstance(res).set('token', token).set('id', user.id).setStatus(true).response()
         } catch (e) {
             ResponseService.handleError(res, e)
         }

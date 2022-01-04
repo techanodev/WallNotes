@@ -6,4 +6,6 @@ export type NoteType = {
     }
     text: string
     color?: string
+    userId: string
+    own?: boolean
 }
