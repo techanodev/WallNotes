@@ -76,6 +76,14 @@
     }
 }
 
+.cursor {
+    position: absolute;
+
+    .icon {
+        font-size: 2rem;
+    }
+}
+
 .home {
     .add {
         font-size: 46px;

@@ -1,73 +1,74 @@
-import { error } from "console";
-import React, { Component } from "react"
-import { Button, Form, Modal } from 'react-bootstrap'
+import React, { Component } from 'react';
+import { Button, Form, Modal } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import Auth from "../../utils/Auth";
-import Request from "../../utils/Request";
+import Auth from '../../utils/Auth';
+import Request from '../../utils/Request';
 
 type Props = {
-    onSubmit: (name: string) => void
-    onCancel: () => void
-}
+  onSubmit: (name: string) => void;
+  onCancel: () => void;
+};
 
 type State = {
-    isSend: boolean
-}
+  isSend: boolean;
+};
 
 export default class QuestModal extends Component<Props, State> {
+  private nameText: React.RefObject<HTMLInputElement>;
 
-    private nameText: React.RefObject<HTMLInputElement>;
+  constructor(props: Props) {
+    super(props);
 
-    constructor(props: Props) {
-        super(props)
+    this.state = { isSend: false };
 
-        this.state = { isSend: false }
+    this.nameText = React.createRef();
+  }
 
-        this.nameText = React.createRef()
+  onClick() {
+    const name = this.nameText.current?.value;
+    if (!name || name == '') {
+      toast.error('یک نام باید وارد نمایید');
+      return;
     }
 
-    onClick() {
-        const name = this.nameText.current?.value
-        if (!name || name == '') {
-            toast.error("یک نام باید وارد نمایید");
-            return
-        }
+    this.setState({ isSend: true });
 
-        this.setState({ isSend: true })
+    Request.send('v1/register/guest', { method: 'POST', data: { name: name } })
+      .then((result) => {
+        if (result.data.status) Auth.setToken(result.data.token);
+        toast.success('کاربر مهمان با موفقیت ساخته شد');
+        this.props.onSubmit(name);
+      })
+      .catch((_e) => {
+        toast.error('خطایی در ایجاد کاربر مهمان رخ داده است.');
+      })
+      .finally(() => {
+        this.setState({ isSend: false });
+      });
+  }
 
-        Request.send('v1/register/guest', { method: 'POST', data: { name: name } }).then(result => {
-            if (result.data.status)
-                Auth.setToken(result.data.token)
-            toast.success('کاربر مهمان با موفقیت ساخته شد')
-            this.props.onSubmit(name)
-        }).catch(_e => {
-            toast.error('خطایی در ایجاد کاربر مهمان رخ داده است.')
-        }).finally(() => {
-            this.setState({ isSend: false })
-        })
-
-    }
-
-    render() {
-        return <>
-            <Modal.Header>
-                <Modal.Title>ورود به عنوان مهمان</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Form.Label htmlFor="text-name">یک نام برای خود انتخاب نمایید</Form.Label>
-                <Form.Control type='text' id="text-name" ref={this.nameText} maxLength={15} />
-                <Form.Text id="passwordHelpBlock" muted={false}>
-                    یک نام کوتاه حداکثر تا 15 حرف برای خود انتخاب نمایید
-                </Form.Text>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={this.props.onCancel} disabled={this.state.isSend}>
-                    نظرم عوض شد
-                </Button>
-                <Button variant="primary" onClick={() => this.onClick()} disabled={this.state.isSend}>
-                    {this.state.isSend ? 'در حال ساخت حساب کاربر' : 'تایید'}
-                </Button>
-            </Modal.Footer>
-        </>
-    }
+  render() {
+    return (
+      <>
+        <Modal.Header>
+          <Modal.Title>ورود به عنوان مهمان</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Label htmlFor="text-name">یک نام برای خود انتخاب نمایید</Form.Label>
+          <Form.Control type="text" id="text-name" ref={this.nameText} maxLength={15} />
+          <Form.Text id="passwordHelpBlock" muted={false}>
+            یک نام کوتاه حداکثر تا 15 حرف برای خود انتخاب نمایید
+          </Form.Text>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={this.props.onCancel} disabled={this.state.isSend}>
+            نظرم عوض شد
+          </Button>
+          <Button variant="primary" onClick={() => this.onClick()} disabled={this.state.isSend}>
+            {this.state.isSend ? 'در حال ساخت حساب کاربر' : 'تایید'}
+          </Button>
+        </Modal.Footer>
+      </>
+    );
+  }
 }
