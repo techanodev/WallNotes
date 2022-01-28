@@ -137,6 +137,7 @@ export default class Note extends React.Component<Props, State> {
                         <></>
                     }
                     <textarea
+                        dir="auto"
                         ref={this.text}
                         placeholder={!this.props.readonly ? 'می توانید اینجا متنی را وارد نمایید' : ''}
                         onChange={(e) => this.onTextChanged(e)}

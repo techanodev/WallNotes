@@ -7,6 +7,7 @@ import Request from "../../utils/Request";
 
 type Props = {
     onSubmit: (name: string) => void
+    onCancel: () => void
 }
 
 type State = {
@@ -60,6 +61,9 @@ export default class QuestModal extends Component<Props, State> {
                 </Form.Text>
             </Modal.Body>
             <Modal.Footer>
+                <Button variant="secondary" onClick={this.props.onCancel} disabled={this.state.isSend}>
+                    نظرم عوض شد
+                </Button>
                 <Button variant="primary" onClick={() => this.onClick()} disabled={this.state.isSend}>
                     {this.state.isSend ? 'در حال ساخت حساب کاربر' : 'تایید'}
                 </Button>

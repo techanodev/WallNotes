@@ -1,6 +1,7 @@
 import { Component } from "react"
 import { Button, Modal } from 'react-bootstrap'
 import Auth from "../../utils/Auth"
+import CreateAccountModal from "./CreateAccountModal"
 import QuestModal from "./QuestModal"
 
 type State = {
@@ -68,11 +69,14 @@ export default class LoginModal extends Component<Props, State> {
                             <Button variant="secondary" onClick={() => this.useAsGuest()}>
                                 به عنوان مهمان
                             </Button>
-                            <Button variant="primary">می خواهم یک حساب کاربری داشته باشم</Button>
+                            <Button variant="primary" onClick={() => this.setState({ panel: "create-account" })}>
+                                می خواهم یک حساب کاربری داشته باشم
+                            </Button>
                         </Modal.Footer>
                     </>
                 }
-                {this.state.panel == "quest" && <QuestModal onSubmit={() => this.onGuestCreate()} />}
+                {this.state.panel == "quest" && <QuestModal onSubmit={() => this.onGuestCreate()} onCancel={() => this.setState({ panel: "welcome" })} />}
+                {this.state.panel == "create-account" && <CreateAccountModal onClick={() => this.setState({ panel: "welcome" })} />}
             </Modal>
         </>
     }
