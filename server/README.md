@@ -1,5 +1,5 @@
 # Wallnote - Server side
-[\< Back to main page](/)
+[\< Back to main page](/README.md)
 
 A server written based on 
 [Node js](https://nodejs.org/) using the 
@@ -34,12 +34,18 @@ Then create excludes dictionary words
 ```console
 $ mkdir src/dict
 $ mkdir src/dict/excludes
-$ echo "export const badWords = [];" > src/dict/excludes
+$ echo "export const badWords = [];" > src/dict/excludes.ts
 ```
+
 
 After create excludes words, install project dependencies:
 ```console
 $ yarn
+```
+
+make a copy from .env.example file for server enviroment and fill it with your own data such as your mongodb url
+```console
+$ cp .env.example .env
 ```
 
 Then you can run project
