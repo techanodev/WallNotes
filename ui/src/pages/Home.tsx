@@ -74,10 +74,13 @@ export default class Home extends React.Component<{}, State> {
   addNewNote(e?: React.MouseEvent) {
     const audio = new Audio('/audios/new-paper.wav');
     audio.play().then(() => {
-      this.socket?.emit('create', {
-        x: e?.clientX ?? 0,
-        y: e?.clientY ?? 0
-      });
+      let x = e?.screenX ?? 0;
+      let y = e?.screenY ?? 0;
+
+      if (x) x += $('.notes').scrollLeft() ?? 0;
+      if (y) x += $('.notes').scrollTop() ?? 0;
+
+      this.socket?.emit('create', { x, y });
     });
   }
 
@@ -181,8 +184,11 @@ export default class Home extends React.Component<{}, State> {
       <div className="home" style={this.state.isWide ? {} : {}}>
         <LoginModal onAuth={() => this.onAuth()} />
 
-        <div className="container" onContextMenu={(e) => this.onContextMenu(e)}></div>
-        <div className="notes" onDoubleClick={(e) => this.addNewNote(e)}>
+        <div
+          className="notes"
+          onDoubleClick={(e) => this.addNewNote(e)}
+          onContextMenu={(e) => this.onContextMenu(e)}
+        >
           {Object.values(this.state.notes)
             .flat()
             .map((note: NoteType) => (

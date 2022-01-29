@@ -11,6 +11,7 @@ type State = {
   showTrash: boolean;
   note: NoteType;
   isMove: boolean;
+  mouseHover: boolean;
 };
 
 type Props = {
@@ -29,7 +30,13 @@ export default class Note extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { showColor: false, showTrash: false, note: props.note, isMove: false };
+    this.state = {
+      showColor: false,
+      showTrash: false,
+      note: props.note,
+      isMove: false,
+      mouseHover: false
+    };
     this.note = React.createRef<HTMLDivElement>();
     this.trash = React.createRef();
     this.text = React.createRef();
@@ -130,8 +137,13 @@ export default class Note extends React.Component<Props, State> {
           <div
             className={'note' + (this.state.isMove ? ' move' : '')}
             ref={this.note}
-            style={{ backgroundColor: this.state.note?.color }}
+            style={{
+              backgroundColor: this.state.note?.color,
+              zIndex: this.state.mouseHover ? 1 : 0
+            }}
             onClick={() => this.onClick()}
+            onMouseEnter={() => this.setState({ mouseHover: true })}
+            onMouseLeave={() => this.setState({ mouseHover: false })}
           >
             {!this.props.readonly ? (
               <div className="handle btn" onClick={() => this.onClick()}>
