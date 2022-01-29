@@ -26,7 +26,7 @@ export default class QuestModal extends Component<Props, State> {
 
   onClick() {
     const name = this.nameText.current?.value;
-    if (!name || name == '') {
+    if (!name || name === '') {
       toast.error('یک نام باید وارد نمایید');
       return;
     }

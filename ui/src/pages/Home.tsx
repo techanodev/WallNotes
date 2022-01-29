@@ -60,7 +60,7 @@ export default class Home extends React.Component<{}, State> {
   removeNoteFromState(id: string) {
     let notes = this.state.userNotes;
     let allNotes = this.state.notes;
-    notes = notes.filter((x) => x.id != id);
+    notes = notes.filter((x) => x.id !== id);
     delete allNotes[id];
     this.setState({ userNotes: notes, notes: allNotes });
   }
@@ -178,15 +178,11 @@ export default class Home extends React.Component<{}, State> {
 
   render() {
     return (
-      <div className="home" style={this.state.isWide ? { minWidth: 2500, minHeight: 2500 } : {}}>
+      <div className="home" style={this.state.isWide ? {} : {}}>
         <LoginModal onAuth={() => this.onAuth()} />
 
-        <div
-          className="container"
-          onContextMenu={(e) => this.onContextMenu(e)}
-          onDoubleClick={(e) => this.addNewNote(e)}
-        ></div>
-        <div className="notes">
+        <div className="container" onContextMenu={(e) => this.onContextMenu(e)}></div>
+        <div className="notes" onDoubleClick={(e) => this.addNewNote(e)}>
           {Object.values(this.state.notes)
             .flat()
             .map((note: NoteType) => (
