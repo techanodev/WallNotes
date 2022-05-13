@@ -7,7 +7,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "build": "tsc",
+    "start": "node build/app.js"
   },
   "dependencies": {
     "@types/i18n": "^0.13.2",

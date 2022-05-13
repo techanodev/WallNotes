@@ -3,12 +3,16 @@
     "target": "es6",
     "moduleResolution": "node",
     "module": "commonjs",
-    "outDir": "dist/",
+    "outDir": "build/",
     "baseUrl": "${workspaceFolder}/src/app.ts",
     "esModuleInterop": true
   },
-
-  "include": ["src/**/**/**/**/*"],
-  "exclude": ["node_modules", "dist"],
+  "include": [
+    "src/**/**/**/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
   "compileOnSave": false,
 }

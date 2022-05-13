@@ -1,0 +1,21 @@
+version: "3"
+services:
+  ui:
+    restart: always
+    build: ./ui
+    ports:
+      - "16997:3000"
+    links:
+      - service
+  service:
+    restart: always
+    build: ./server
+    ports:
+      - "17653:8000"
+    links:
+      - mongo
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./data:/data/db
