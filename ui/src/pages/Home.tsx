@@ -51,6 +51,11 @@ export default class Home extends React.Component<{}, State> {
     });
   }
 
+  componentWillUnmount() {
+    this.socket?.disconnect();
+    this.socket?.close();
+  }
+
   addNoteToState(note: NoteType) {
     const notes = this.state.userNotes;
     notes.push(note);
