@@ -1,9 +1,9 @@
 import React from 'react';
 import { toast } from 'react-toastify';
 import { io, Socket } from 'socket.io-client';
+import { Box, Button } from '@mui/material';
+import { TouchApp as TouchIcon, PanTool as HandIcon } from '@mui/icons-material';
 import $ from 'jquery';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHandRock, faHandPaper } from '@fortawesome/free-solid-svg-icons';
 import LoginModal from '../components/modals/LoginModal';
 import Note from '../components/Note';
 import { NoteType } from '../types/NoteType';
@@ -49,6 +49,11 @@ export default class Home extends React.Component<{}, State> {
         this.socket?.emit('cursor', { x: e.pageX, y: e.pageY, isClick: e?.buttons });
       }
     });
+  }
+
+  componentWillUnmount() {
+    this.socket?.disconnect();
+    this.socket?.close();
   }
 
   addNoteToState(note: NoteType) {
@@ -181,7 +186,7 @@ export default class Home extends React.Component<{}, State> {
 
   render() {
     return (
-      <div className="home" style={this.state.isWide ? {} : {}}>
+      <Box className="home">
         <LoginModal onAuth={() => this.onAuth()} />
 
         <div
@@ -204,22 +209,22 @@ export default class Home extends React.Component<{}, State> {
             />
           ))}
           {Object.values(this.state.cursors).map((cursor) => (
-            <div
+            <Box
               className="cursors"
-              style={{
+              sx={{
                 transform: `translate(${cursor.x}px, ${cursor.y}px)`
               }}
             >
               <div>{cursor.username}</div>
-              <FontAwesomeIcon className="icon" icon={cursor.isClick ? faHandRock : faHandPaper} />
-            </div>
+              {!cursor.isClick ? <HandIcon /> : <TouchIcon />}
+            </Box>
           ))}
         </div>
 
-        <button className="btn btn-primary rounded-circle add" onClick={() => this.addNewNote()}>
+        <Button variant="contained" className="add" onClick={() => this.addNewNote()}>
           +
-        </button>
-      </div>
+        </Button>
+      </Box>
     );
   }
 }

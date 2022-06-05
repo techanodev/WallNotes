@@ -3,15 +3,16 @@ import Draggable, { DraggableData } from 'react-draggable';
 import { ColorResult, TwitterPicker } from 'react-color';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faPalette } from '@fortawesome/free-solid-svg-icons';
+import { Box, Button, ButtonGroup, IconButton, Paper, Popper, Stack, Tooltip } from '@mui/material';
+import { Delete as TrashIcon, ColorLens as ColorLensIcon } from '@mui/icons-material';
 import { NoteType } from '../types/NoteType';
-import { Button, ButtonGroup, Overlay, Tooltip } from 'react-bootstrap';
 
 type State = {
   showColor: boolean;
-  showTrash: boolean;
   note: NoteType;
   isMove: boolean;
   mouseHover: boolean;
+  anchorDeleteElement: null | HTMLElement;
 };
 
 type Props = {
@@ -25,17 +26,17 @@ type Props = {
 
 export default class Note extends React.Component<Props, State> {
   readonly note: React.RefObject<HTMLDivElement>;
-  readonly trash: React.RefObject<HTMLDivElement>;
+  readonly trash: React.RefObject<HTMLButtonElement>;
   readonly text: React.RefObject<HTMLTextAreaElement>;
 
   constructor(props: Props) {
     super(props);
     this.state = {
       showColor: false,
-      showTrash: false,
       note: props.note,
       isMove: false,
-      mouseHover: false
+      mouseHover: false,
+      anchorDeleteElement: null
     };
     this.note = React.createRef<HTMLDivElement>();
     this.trash = React.createRef();
@@ -57,12 +58,14 @@ export default class Note extends React.Component<Props, State> {
     this.setState({ showColor: !this.state.showColor });
   }
 
-  toggleTrash() {
-    this.setState({ showTrash: !this.state.showTrash });
+  toggleTrash(event: React.MouseEvent<HTMLElement>) {
+    this.setState({
+      anchorDeleteElement: this.state.anchorDeleteElement ? null : event.currentTarget
+    });
   }
 
   onStartMoving() {
-    this.setState({ isMove: true, showTrash: false, showColor: false });
+    this.setState({ isMove: true, showColor: false });
   }
 
   onEndMoving() {
@@ -72,7 +75,7 @@ export default class Note extends React.Component<Props, State> {
   }
 
   cancelTrash() {
-    this.setState({ showTrash: false });
+    // this.setState({ showTrash: false });
   }
 
   onDelete() {
@@ -121,6 +124,9 @@ export default class Note extends React.Component<Props, State> {
   }
 
   render() {
+    const deleteIsOpen = Boolean(this.state.anchorDeleteElement);
+    const deletePopperId = deleteIsOpen ? 'delete-popper' : undefined;
+
     return (
       <>
         <Draggable
@@ -134,10 +140,10 @@ export default class Note extends React.Component<Props, State> {
           onStop={() => this.onEndMoving()}
           onDrag={(_e, data) => this.onMove(data)}
         >
-          <div
+          <Box
             className={'note' + (this.state.isMove ? ' move' : '')}
             ref={this.note}
-            style={{
+            sx={{
               backgroundColor: this.state.note?.color,
               zIndex: this.state.mouseHover ? 1 : 0
             }}
@@ -162,12 +168,19 @@ export default class Note extends React.Component<Props, State> {
             ></textarea>
             {!this.props.readonly ? (
               <>
-                <div className="icon" ref={this.trash} onClick={() => this.toggleTrash()}>
-                  <FontAwesomeIcon icon={faTrash} />
-                </div>
-                <div className="icon palette">
-                  <FontAwesomeIcon onClick={() => this.toggleColors()} icon={faPalette} />
-                </div>
+                <Stack className="tools" direction="row-reverse">
+                  <IconButton
+                    aria-describedby={deletePopperId}
+                    type="button"
+                    ref={this.trash}
+                    onClick={(e) => this.toggleTrash(e)}
+                  >
+                    <TrashIcon />
+                  </IconButton>
+                  <IconButton onClick={() => this.toggleColors()}>
+                    <ColorLensIcon />
+                  </IconButton>
+                </Stack>
 
                 {this.state.showColor && (
                   <TwitterPicker
@@ -177,30 +190,31 @@ export default class Note extends React.Component<Props, State> {
                   />
                 )}
 
-                <Overlay
-                  target={this.trash.current}
-                  show={this.state.showTrash}
+                <Popper
+                  id={deletePopperId}
+                  open={deleteIsOpen}
+                  anchorEl={this.state.anchorDeleteElement}
                   placement="bottom-end"
                 >
-                  {(props) => (
-                    <Tooltip className="text-start" {...props}>
+                  <Paper sx={{ p: 2 }}>
+                    <Stack>
                       <span className="d-block">آیا شما مطمئن هستید که این مورد را حذف کنید ؟</span>
                       <ButtonGroup dir="ltr">
-                        <Button variant="secondary" onClick={() => this.cancelTrash()}>
+                        <Button variant="outlined" onClick={() => this.cancelTrash()}>
                           خیر
                         </Button>
-                        <Button variant="primary" onClick={() => this.onDelete()}>
+                        <Button variant="contained" onClick={() => this.onDelete()}>
                           بله
                         </Button>
                       </ButtonGroup>
-                    </Tooltip>
-                  )}
-                </Overlay>
+                    </Stack>
+                  </Paper>
+                </Popper>
               </>
             ) : (
               <></>
             )}
-          </div>
+          </Box>
         </Draggable>
       </>
     );

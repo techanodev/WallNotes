@@ -1,5 +1,4 @@
 @import './font.scss';
-@import '../../../node_modules/bootstrap/scss/bootstrap.scss';
 
 .background {
   background-color: #ffffff;
@@ -55,16 +54,10 @@
     bottom: -95px;
   }
 
-  .icon {
-    bottom: 10px;
+  .tools {
     position: absolute;
-    right: 15px;
-    color: black;
-    cursor: pointer;
-
-    &.palette {
-      right: 50px;
-    }
+    bottom: 0;
+    right: 0;
   }
 
   .tooltip-inner {
@@ -103,6 +96,7 @@
     left: 15px;
     bottom: 15px;
     z-index: 100;
+    border-radius: 50%;
   }
 
   .container {
