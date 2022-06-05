@@ -1,5 +1,5 @@
+import { Box, Button, ButtonGroup, Divider, Stack, TextField, Typography } from '@mui/material';
 import React, { Component } from 'react';
-import { Button, Form, Modal } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import Auth from '../../utils/Auth';
 import Request from '../../utils/Request';
@@ -49,26 +49,29 @@ export default class QuestModal extends Component<Props, State> {
 
   render() {
     return (
-      <>
-        <Modal.Header>
-          <Modal.Title>ورود به عنوان مهمان</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Label htmlFor="text-name">یک نام برای خود انتخاب نمایید</Form.Label>
-          <Form.Control type="text" id="text-name" ref={this.nameText} maxLength={15} />
-          <Form.Text id="passwordHelpBlock" muted={false}>
-            یک نام کوتاه حداکثر تا 15 حرف برای خود انتخاب نمایید
-          </Form.Text>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={this.props.onCancel} disabled={this.state.isSend}>
+      <Stack spacing={2} alignItems="end">
+        <Typography component="h2" variant="h6">
+          ورود به عنوان مهمان
+        </Typography>
+        <Divider sx={{ width: '100%' }} />
+        <Box dir="rtl">
+          <TextField
+            label="یک نام برای خود انتخاب نمایید"
+            placeholder="یک نام کوتاه حداکثر تا 15 حرف برای خود انتخاب نمایید"
+            inputRef={this.nameText}
+            fullWidth
+          />
+        </Box>
+        <Divider sx={{ width: '100%' }} />
+        <ButtonGroup dir="ltr">
+          <Button variant="outlined" onClick={this.props.onCancel} disabled={this.state.isSend}>
             نظرم عوض شد
           </Button>
-          <Button variant="primary" onClick={() => this.onClick()} disabled={this.state.isSend}>
+          <Button variant="contained" onClick={() => this.onClick()} disabled={this.state.isSend}>
             {this.state.isSend ? 'در حال ساخت حساب کاربر' : 'تایید'}
           </Button>
-        </Modal.Footer>
-      </>
+        </ButtonGroup>
+      </Stack>
     );
   }
 }
