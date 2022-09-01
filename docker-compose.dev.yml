@@ -1,0 +1,29 @@
+version: "3"
+services:
+  ui:
+    restart: always
+    build:
+      context: ./ui
+      dockerfile: Dockerfile.dev
+    ports:
+      - "16997:3000"
+    links:
+      - service
+    volumes:
+      - ./src:/app/src
+  service:
+    restart: always
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    ports:
+      - "17653:8000"
+    links:
+      - mongo
+    volumes:
+      - ./src:/app/src
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./data:/data/db

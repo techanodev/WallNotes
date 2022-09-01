@@ -1,118 +1,114 @@
-import RegexService from './regex.services'
-import { badWords } from '../dict/excludes/words'
+import RegexService from './regex.services';
 
 /**
  * Service for string
  */
-export default class StringService {
-}
+export default class StringService {}
 
 declare global {
-    // eslint-disable-next-line no-unused-vars
-    interface String {
-        /**
-         * To camel_case format
-         */
-        toCamelLowerCase(): string
+  // eslint-disable-next-line no-unused-vars
+  interface String {
+    /**
+     * To camel_case format
+     */
+    toCamelLowerCase(): string;
 
-        /**
-         * To CamelCase format
-         */
-        toCamelUpperCase(): string
+    /**
+     * To CamelCase format
+     */
+    toCamelUpperCase(): string;
 
-        /**
-         * To camelCase format
-         */
-        toCamelStandardCase(): string
+    /**
+     * To camelCase format
+     */
+    toCamelStandardCase(): string;
 
-        isJson(): boolean
+    isJson(): boolean;
 
-        decodeJson(): any
+    decodeJson(): any;
 
-        regex(): RegexService
+    regex(): RegexService;
 
-        toBoolean(): boolean
+    toBoolean(): boolean;
 
-        isNumeric(): boolean
+    isNumeric(): boolean;
 
-        removeBadWords(): string
-    }
+    removeBadWords(): string;
+  }
 }
 
 String.prototype.removeBadWords = function (): string {
-    let text: string = this.toString()
+  let text: string = this.toString();
 
-    let parts: string[] = text.split(' ')
+  let parts: string[] = text.split(' ');
 
-    for (let i = 0; i < parts.length; i++) {
-        const text = parts[i]
-        if (!badWords.includes(text)) continue
-        const len = parts[i].length
-        parts[i] = ''
-        for (let j = 0; j < len; j++) {
-            parts[i] += "*"
-        }
+  for (let i = 0; i < parts.length; i++) {
+    const len = parts[i].length;
+    parts[i] = '';
+    for (let j = 0; j < len; j++) {
+      parts[i] += '*';
     }
+  }
 
-    return parts.join(' ')
-}
+  return parts.join(' ');
+};
 
 String.prototype.toCamelLowerCase = function (): string {
-    const re = /[A-Z]/
-    let val: string = this.toString()
-    while (re.exec(val)) {
-        const r = re.exec(val)
-        if (r == null) break
-        if (r.index == 0) {
-            val = val.replace(r[0], r[0].toLowerCase())
-            continue
-        }
-        val = val.replace(r[0], '_' + r[0].toLowerCase())
+  const re = /[A-Z]/;
+  let val: string = this.toString();
+  while (re.exec(val)) {
+    const r = re.exec(val);
+    if (r == null) break;
+    if (r.index == 0) {
+      val = val.replace(r[0], r[0].toLowerCase());
+      continue;
     }
-    return val.toString()
-}
+    val = val.replace(r[0], '_' + r[0].toLowerCase());
+  }
+  return val.toString();
+};
 
 String.prototype.toCamelUpperCase = function (): string {
-    const re = /_[a-z]/
-    let val: string = this.toString()
-    val = val.replace(/^\w/, (c) => c.toUpperCase())
-    while (re.exec(val)) {
-        const r = re.exec(val)
-        if (r == null) break
-        val = val.replace(r[0], r[0].replace('_', '').toUpperCase())
-    }
-    return val.toString()
-}
+  const re = /_[a-z]/;
+  let val: string = this.toString();
+  val = val.replace(/^\w/, (c) => c.toUpperCase());
+  while (re.exec(val)) {
+    const r = re.exec(val);
+    if (r == null) break;
+    val = val.replace(r[0], r[0].replace('_', '').toUpperCase());
+  }
+  return val.toString();
+};
 
 String.prototype.toCamelStandardCase = function (): string {
-    return this.toCamelUpperCase()
-        .toString()
-        .replace(/^\w/, (c) => c.toLowerCase())
-        .toString()
-}
+  return this.toCamelUpperCase()
+    .toString()
+    .replace(/^\w/, (c) => c.toLowerCase())
+    .toString();
+};
 
 String.prototype.isJson = function (): boolean {
-    try {
-        JSON.parse(this.toString())
-        return true
-    } catch {
-        return false
-    }
-}
+  try {
+    JSON.parse(this.toString());
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 String.prototype.decodeJson = function (): any {
-    return JSON.parse(this.toString())
-}
+  return JSON.parse(this.toString());
+};
 
 String.prototype.regex = function (): RegexService {
-    return new RegexService(this.toString())
-}
+  return new RegexService(this.toString());
+};
 
 String.prototype.toBoolean = function (): boolean {
-    if (!this.regex().isBoolean()) return false
-    return (/(true|1)/).exec(this.toLowerCase()) != undefined
-}
+  if (!this.regex().isBoolean()) return false;
+  return /(true|1)/.exec(this.toLowerCase()) != undefined;
+};
 
 String.prototype.isNumeric = function (): boolean {
-    return !isNaN(Number(this))
-}
+  return !isNaN(Number(this));
+};

@@ -1,17 +1,12 @@
-FROM node:latest
+FROM node:latest AS build-step
 
-WORKDIR /app
+WORKDIR /build
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
-ENV PATH /app/node_modules/.bin:$PATH
+COPY . .
+RUN yarn build
 
-COPY package.json ./
-COPY yarn.lock ./
-RUN yarn
-RUN yarn add react-scripts -g
-
-# add app
-COPY . ./
-
-EXPOSE 3000
-
-CMD ["yarn", "start"]
+FROM nginx:1.18-alpine
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=build-step /build/build /frontend/build

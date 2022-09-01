@@ -1,9 +1,7 @@
 import React from 'react';
 import Draggable, { DraggableData } from 'react-draggable';
 import { ColorResult, TwitterPicker } from 'react-color';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faPalette } from '@fortawesome/free-solid-svg-icons';
-import { Box, Button, ButtonGroup, IconButton, Paper, Popper, Stack, Tooltip } from '@mui/material';
+import { Box, Button, ButtonGroup, IconButton, Paper, Popper, Stack } from '@mui/material';
 import { Delete as TrashIcon, ColorLens as ColorLensIcon } from '@mui/icons-material';
 import { NoteType } from '../types/NoteType';
 

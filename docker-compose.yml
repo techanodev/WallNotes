@@ -3,19 +3,21 @@ services:
   ui:
     restart: always
     build: ./ui
+    environment:
+      - REACT_APP_SERVER=http://localhost:17653/
     ports:
-      - "16997:3000"
-    links:
-      - service
+      - "16997:80"
   service:
     restart: always
     build: ./server
+    environment:
+      - APP_DB=mongodb://mongo:27017/notes
+      - APP_SECRET_KEY=y!#/G&'QwM5HE7h;g+bXWgH:(GA2G4
     ports:
       - "17653:8000"
     links:
       - mongo
   mongo:
-    container_name: mongo
     image: mongo
     volumes:
       - ./data:/data/db
